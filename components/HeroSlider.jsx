@@ -7,48 +7,48 @@ export default function HeroSlider() {
     () => [
       {
         key: "care",
-        img: "/banners/care.jpg",
+        img: "/banners/banner-01.jpg",
         title: "시설 운영자를 위한\n배상책임 보험 상담",
-        desc:
-          "요양시설·주차장 등 운영 중 생길 수 있는 사고/분쟁 리스크를\n이해하기 쉬운 언어로 정리해드립니다.",
-        badges: ["운영 형태별 체크리스트", "가입 전 확인 포인트", "사고 시 대응 흐름"],
+        desc: "요양시설·주차장 등 시설 운영 중 발생할 수 있는 리스크를\n핵심만 쉽게 정리해드립니다.",
+        chips: ["운영 형태별 체크리스트", "가입 전 확인 포인트", "사고 시 대응 흐름"],
       },
       {
         key: "parking",
-        img: "/banners/parking.jpg",
+        img: "/banners/banner-02.jpg",
         title: "주차장 운영자\n배상책임 리스크 정리",
-        desc:
-          "사고가 났을 때 어떤 순서로 대응해야 하는지,\n상담 전에 핵심만 먼저 잡아드립니다.",
-        badges: ["사고 유형 정리", "운영자 책임 포인트", "민원 대응 가이드"],
+        desc: "사고가 났을 때 어떤 순서로 대응해야 하는지,\n상담 전 핵심만 먼저 잡아드립니다.",
+        chips: ["사고 유형 정리", "운영자 책임 포인트", "민원 대응 가이드"],
       },
       {
-        key: "checklist",
-        img: "/banners/checklist.jpg",
-        title: "가입 전에\n체크할 것만 3분 정리",
-        desc:
-          "지금 바로 가입할 필요는 없습니다.\n먼저 구조를 이해하고 내 시설에 맞는 방향을 잡는 게 우선입니다.",
-        badges: ["구조 이해", "체크포인트", "맞춤 안내"],
+        key: "check",
+        img: "/banners/banner-03.jpg",
+        title: "가입 전에 확인할 것\n3분 체크리스트",
+        desc: "상담 신청 전, 내 시설 상황을 먼저 정리하면\n상담 품질이 확 올라갑니다.",
+        chips: ["필수 서류", "운영 구조", "보장 구조"],
       },
     ],
     []
   );
 
   const [idx, setIdx] = useState(0);
-  const total = slides.length;
-
-  useEffect(() => {
-    const id = setInterval(() => setIdx((v) => (v + 1) % total), 5000); // ✅ 5초
-    return () => clearInterval(id);
-  }, [total]);
-
-  const go = (next) => setIdx((next + total) % total);
-
   const s = slides[idx];
+
+  // 자동 로테이션 (5초)
+  useEffect(() => {
+    const t = setInterval(() => {
+      setIdx((v) => (v + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [slides.length]);
+
+  const goPrev = () => setIdx((v) => (v - 1 + slides.length) % slides.length);
+  const goNext = () => setIdx((v) => (v + 1) % slides.length);
 
   return (
     <section className="hero">
       <div className="heroCard">
         <div className="heroMedia" aria-hidden="true">
+          {/* ✅ 여기 src가 /banners/... 로 들어가야 정상 표시 */}
           <img src={s.img} alt="" className="heroImg" />
           <div className="heroShade" />
         </div>
@@ -72,40 +72,40 @@ export default function HeroSlider() {
             ))}
           </p>
 
-          <div className="heroBadges">
-            {s.badges.map((b) => (
-              <span className="badge" key={b}>
-                {b}
+          <div className="heroChips">
+            {s.chips.map((c) => (
+              <span className="chip" key={c}>
+                {c}
               </span>
             ))}
           </div>
 
           <div className="heroActions">
-            <a className="btnPrimary" href="#consult">
+            <a className="btnPrimary" href="#contact">
               지금 상담 요청하기
             </a>
-            <a className="btnGhost" href="#products">
+            <a className="btnSecondary" href="#products">
               상품 먼저 보기
             </a>
           </div>
 
           <div className="heroNav">
-            <button className="navBtn" onClick={() => go(idx - 1)} aria-label="이전 배너">
+            <button className="navBtn" onClick={goPrev} aria-label="prev">
               ‹
             </button>
 
-            <div className="dots" role="tablist" aria-label="배너 선택">
+            <div className="dots" aria-label="slides">
               {slides.map((_, i) => (
                 <button
                   key={i}
-                  className={"dot" + (i === idx ? " active" : "")}
+                  className={i === idx ? "dot on" : "dot"}
                   onClick={() => setIdx(i)}
-                  aria-label={`${i + 1}번 배너`}
+                  aria-label={`slide ${i + 1}`}
                 />
               ))}
             </div>
 
-            <button className="navBtn" onClick={() => go(idx + 1)} aria-label="다음 배너">
+            <button className="navBtn" onClick={goNext} aria-label="next">
               ›
             </button>
           </div>
@@ -114,4 +114,3 @@ export default function HeroSlider() {
     </section>
   );
 }
-
